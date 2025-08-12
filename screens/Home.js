@@ -1,58 +1,67 @@
-import React, { useState } from "react";
-import { View, SafeAreaView, FlatList } from "react-native";
+import { useMemo, useState, useCallback } from "react";
+import { View, FlatList, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { NFTCard, HomeHeader, FocusedStatusBar } from "../components";
-import { COLORS, NFTData } from "../constants";
+import { COLORS, NFTData, SIZES } from "../constants";
 
-const Home = () => {
-  const [nftData, setNftData] = useState(NFTData);
+export default function Home() {
+  const [query, setQuery] = useState("");
 
-  const handleSearch = (value) => {
-    if (value.length === 0) {
-      setNftData(NFTData);
-    }
+  const data = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return NFTData;
+    return NFTData.filter((it) => it.name.toLowerCase().includes(q));
+  }, [query]);
 
-    const filteredData = NFTData.filter((item) =>
-      item.name.toLowerCase().includes(value.toLowerCase())
-    );
-
-    if (filteredData.length === 0) {
-      setNftData(NFTData);
-    } else {
-      setNftData(filteredData);
-    }
-  };
+  const renderItem = useCallback(({ item }) => <NFTCard data={item} />, []);
+  const keyExtractor = useCallback((item) => item.id, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <FocusedStatusBar backgroundColor={COLORS.primary} />
-      <View style={{ flex: 1 }}>
-        <View style={{ zIndex: 0 }}>
+      <View style={styles.container}>
+        <View style={styles.listLayer}>
           <FlatList
-            data={nftData}
-            renderItem={({ item }) => <NFTCard data={item} />}
-            keyExtractor={(item) => item.id}
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
             showsVerticalScrollIndicator={false}
-            ListHeaderComponent={<HomeHeader onSearch={handleSearch} />}
+            ListHeaderComponent={
+              <HomeHeader query={query} onChangeSearch={setQuery} />
+            }
+            ListEmptyComponent={
+              <View style={styles.empty}>
+                {/* lightweight empty state without text dependency */}
+              </View>
+            }
+            contentContainerStyle={styles.content}
           />
         </View>
 
-        <View
-          style={{
-            position: "absolute",
-            top: 0,
-            bottom: 0,
-            right: 0,
-            left: 0,
-            zIndex: -1,
-          }}
-        >
-          <View style={{ height: 300, backgroundColor: COLORS.primary }} />
-          <View style={{ flex: 1, backgroundColor: COLORS.white }} />
+        <View pointerEvents="none" style={styles.bg}>
+          <View style={styles.bgTop} />
+          <View style={styles.bgBottom} />
         </View>
       </View>
     </SafeAreaView>
   );
-};
+}
 
-export default Home;
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  container: { flex: 1 },
+  listLayer: { zIndex: 0 },
+  content: { paddingBottom: SIZES.extraLarge * 2 },
+  empty: { height: 24 },
+  bg: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    zIndex: -1,
+  },
+  bgTop: { height: 300, backgroundColor: COLORS.primary },
+  bgBottom: { flex: 1, backgroundColor: COLORS.white },
+});

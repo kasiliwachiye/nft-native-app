@@ -1,56 +1,55 @@
-import React from "react";
-import { TouchableOpacity, Text, Image } from "react-native";
-
+import { Pressable, Text, Image, StyleSheet } from "react-native";
 import { COLORS, SIZES, FONTS, SHADOWS } from "../constants";
 
-export const CircleButton = ({ imgUrl, handlePress, ...props }) => {
+export const CircleButton = ({
+  imgUrl,
+  handlePress,
+  onPress,
+  ...styleProps
+}) => {
+  const press = onPress ?? handlePress;
   return (
-    <TouchableOpacity
-      style={{
-        width: 40,
-        height: 40,
-        backgroundColor: COLORS.white,
-        position: "absolute",
-        borderRadius: SIZES.extraLarge,
-        alignItems: "center",
-        justifyContent: "center",
-        ...SHADOWS.light,
-        ...props,
-      }}
-      onPress={handlePress}
-    >
-      <Image
-        source={imgUrl}
-        resizeMode="contain"
-        style={{ width: 24, height: 24 }}
-      />
-    </TouchableOpacity>
+    <Pressable style={[styles.circle, styleProps]} onPress={press} hitSlop={8}>
+      <Image source={imgUrl} resizeMode="contain" style={styles.circleIcon} />
+    </Pressable>
   );
 };
 
-export const RectButton = ({ minWidth, fontSize, handlePress, ...props }) => {
+export const RectButton = ({
+  minWidth,
+  fontSize,
+  handlePress,
+  onPress,
+  ...styleProps
+}) => {
+  const press = onPress ?? handlePress;
   return (
-    <TouchableOpacity
-      style={{
-        backgroundColor: COLORS.primary,
-        padding: SIZES.small,
-        borderRadius: SIZES.extraLarge,
-        minWidth: minWidth,
-        ...props,
-      }}
-      onPress={handlePress}
-    >
-      <Text
-        style={{
-          fontFamily: FONTS.semiBold,
-          fontSize: fontSize,
-          color: COLORS.white,
-          textAlign: "center",
-        }}
-      >
-        Place a bid
-      </Text>
-    </TouchableOpacity>
+    <Pressable style={[styles.rect, { minWidth }, styleProps]} onPress={press}>
+      <Text style={[styles.rectText, { fontSize }]}>Place a bid</Text>
+    </Pressable>
   );
 };
 
+const styles = StyleSheet.create({
+  circle: {
+    width: 40,
+    height: 40,
+    backgroundColor: COLORS.white,
+    position: "absolute",
+    borderRadius: SIZES.extraLarge,
+    alignItems: "center",
+    justifyContent: "center",
+    ...SHADOWS.light,
+  },
+  circleIcon: { width: 24, height: 24 },
+  rect: {
+    backgroundColor: COLORS.primary,
+    padding: SIZES.small,
+    borderRadius: SIZES.extraLarge,
+  },
+  rectText: {
+    fontFamily: FONTS.semiBold,
+    color: COLORS.white,
+    textAlign: "center",
+  },
+});

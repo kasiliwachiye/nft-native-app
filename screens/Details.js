@@ -102,4 +102,3 @@ const Details = ({ route, navigation }) => {
 };
 
 export default Details;
-
