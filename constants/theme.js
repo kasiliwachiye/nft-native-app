@@ -1,20 +1,21 @@
 export const COLORS = {
-  brand: "#222428", // charcoal
-  primary: "#222428", // buttons and highlights
-  secondary: "#8A8F98", // cool gray for secondary text
+  brand: "#222428",
+  primary: "#222428",
+  secondary: "#8A8F98",
 
-  // Typography
-  text: "#111315", // near-black
-  muted: "#6B7280", // slate gray
+  text: "#111315",
+  muted: "#6B7280",
 
-  // Surfaces
-  bg: "#F6F7F9", // app background
-  surface: "#FFFFFF", // cards and sheets
-  line: "#E6E8EC", // dividers and strokes
+  bg: "#F6F7F9",
+  surface: "#FFFFFF",
+  line: "#E6E8EC",
 
-  // Utility
   white: "#FFFFFF",
-  gray: "#F2F3F5", // subtle fills
+  gray: "#F2F3F5",
+
+  heartActive: "#EF4444",
+  heartDefault: "#9CA3AF",
+  online: "#22C55E",
 };
 
 export const SIZES = {

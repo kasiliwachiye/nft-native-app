@@ -1,30 +1,42 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { View, Image, Text } from "react-native";
-
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { View, Image, Text, Pressable, Animated } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { SIZES, FONTS, COLORS, SHADOWS, assets } from "../constants";
 
-export const NFTTitle = ({ title, subTitle, titleSize, subTitleSize }) => (
-  <View>
-    <Text
-      style={{
-        fontFamily: FONTS.semiBold,
-        fontSize: titleSize,
-        color: COLORS.text,
-      }}
-    >
-      {title}
-    </Text>
-    <Text
-      style={{
-        fontFamily: FONTS.regular,
-        fontSize: subTitleSize,
-        color: COLORS.muted,
-      }}
-    >
-      {subTitle}
-    </Text>
-  </View>
-);
+export const NFTTitle = ({ title, subTitle, titleSize, subTitleSize }) => {
+  const nav = useNavigation();
+  return (
+    <View>
+      <Text
+        style={{
+          fontFamily: FONTS.semiBold,
+          fontSize: titleSize,
+          color: COLORS.text,
+        }}
+      >
+        {title}
+      </Text>
+
+      <Pressable
+        onPress={() => nav.navigate("Creator", { name: subTitle })}
+        hitSlop={6}
+      >
+        <Text
+          style={{
+            fontFamily: FONTS.regular,
+            fontSize: subTitleSize,
+            color: COLORS.muted,
+          }}
+        >
+          by{" "}
+          <Text style={{ color: COLORS.text, textDecorationLine: "underline" }}>
+            {subTitle}
+          </Text>
+        </Text>
+      </Pressable>
+    </View>
+  );
+};
 
 export const EthPrice = ({ price }) => (
   <View
@@ -87,27 +99,63 @@ function formatRemain(ms) {
 
 export const EndDate = ({ endAt }) => {
   const [now, setNow] = useState(Date.now());
+  const pulse = useRef(new Animated.Value(1)).current;
+
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
-  const remain = useMemo(() => formatRemain((endAt || 0) - now), [endAt, now]);
 
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 0.3,
+          duration: 650,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 650,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse]);
+
+  const remain = useMemo(() => formatRemain((endAt || 0) - now), [endAt, now]);
   const ended = remain === "Ended";
+
   return (
     <View
       style={{
+        flexDirection: "row",
+        alignItems: "center",
         paddingHorizontal: 10,
         paddingVertical: 6,
         borderRadius: 999,
-        backgroundColor: ended ? "#fee2e2" : COLORS.gray,
+        backgroundColor: ended ? "#f3f4f6" : COLORS.gray,
       }}
     >
+      {!ended && (
+        <Animated.View
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: 3,
+            backgroundColor: COLORS.online,
+            marginRight: 6,
+            opacity: pulse,
+          }}
+        />
+      )}
       <Text
         style={{
           fontFamily: FONTS.medium,
           fontSize: 12,
-          color: ended ? "#991b1b" : COLORS.text,
+          color: ended ? COLORS.muted : COLORS.text,
         }}
       >
         {ended ? "Ended" : `Ends in ${remain}`}

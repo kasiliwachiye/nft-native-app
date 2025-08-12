@@ -12,33 +12,48 @@ import {
   DetailsBid,
   FocusedStatusBar,
 } from "../components";
+import { NFTTitle } from "../components/SubInfo";
 import { useNFTs } from "../store/nfts";
 import { useWallet } from "../store/wallet";
 import { useUser } from "../store/user";
+import { useFavorites } from "../store/favorites";
 import BidModal from "../components/BidModal";
 
-const DetailsHeader = ({ data, navigation }) => (
-  <View
-    style={{ width: "100%", aspectRatio: 4 / 3, backgroundColor: COLORS.gray }}
-  >
-    <Image
-      source={data.image}
-      resizeMode="cover"
-      style={{ width: "100%", height: "100%" }}
-    />
-    <CircleButton
-      imgUrl={assets.left}
-      handlePress={() => navigation.goBack()}
-      left={15}
-      top={StatusBar.currentHeight + 10}
-    />
-    <CircleButton
-      imgUrl={assets.heart}
-      right={15}
-      top={StatusBar.currentHeight + 10}
-    />
-  </View>
-);
+const DetailsHeader = ({ data, navigation }) => {
+  const { isFav, toggle } = useFavorites();
+  const active = isFav(data.id);
+
+  return (
+    <View
+      style={{
+        width: "100%",
+        aspectRatio: 4 / 3,
+        backgroundColor: COLORS.gray,
+      }}
+    >
+      <Image
+        source={data.image}
+        resizeMode="cover"
+        style={{ width: "100%", height: "100%" }}
+      />
+
+      <CircleButton
+        imgUrl={assets.left}
+        handlePress={() => navigation.goBack()}
+        left={15}
+        top={StatusBar.currentHeight + 10}
+      />
+
+      <CircleButton
+        imgUrl={assets.heart}
+        right={15}
+        top={StatusBar.currentHeight + 10}
+        tintColor={active ? COLORS.heartActive : COLORS.heartDefault}
+        handlePress={() => toggle(data.id)}
+      />
+    </View>
+  );
+};
 
 export default function Details({ route, navigation }) {
   const { id: idParam, data: dataParam } = route.params || {};
@@ -79,7 +94,7 @@ export default function Details({ route, navigation }) {
         translucent
       />
 
-      {/* Sticky CTA */}
+      {/* Sticky CTA above tab bar */}
       <View
         style={{
           position: "absolute",
@@ -110,7 +125,8 @@ export default function Details({ route, navigation }) {
         ListHeaderComponent={() => (
           <>
             <DetailsHeader data={data} navigation={navigation} />
-            {/* Meta section */}
+
+            {/* Meta section - title with pressable creator, plus timer row */}
             <View
               style={{
                 backgroundColor: COLORS.surface,
@@ -120,29 +136,18 @@ export default function Details({ route, navigation }) {
                 borderColor: COLORS.line,
               }}
             >
-              <SubInfo endAt={data.endAt} />
+              <NFTTitle
+                title={data.name}
+                subTitle={data.creator}
+                titleSize={20}
+                subTitleSize={14}
+              />
+
               <View style={{ height: 12 }} />
-              <Text
-                style={{
-                  fontFamily: FONTS.semiBold,
-                  fontSize: 20,
-                  color: COLORS.text,
-                }}
-              >
-                {data.name}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: FONTS.regular,
-                  color: COLORS.muted,
-                  marginTop: 4,
-                }}
-              >
-                by {data.creator}
-              </Text>
+              <SubInfo endAt={data.endAt} />
             </View>
 
-            {/* Description */}
+            {/* Description - no duplicate title here */}
             <View style={{ padding: SIZES.large }}>
               <DetailsDesc data={data} />
               {data.bids.length > 0 && (

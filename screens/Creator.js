@@ -1,33 +1,26 @@
 import React, { useMemo, useRef, useState } from "react";
-import {
-  View,
-  FlatList,
-  Text,
-  Image,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, TextInput, Image, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import { FocusedStatusBar, NFTCard } from "../components";
 import { COLORS, FONTS, SIZES, assets } from "../constants";
-import { useFavorites } from "../store/favorites";
 import { useNFTs } from "../store/nfts";
 
-export default function Favorites() {
+export default function Creator({ route }) {
+  const { name } = route.params || {};
   const { list } = useNFTs();
-  const { isFav, all, count, reset } = useFavorites();
-  const [query, setQuery] = useState("");
-  const timer = useRef(null);
   const tabBarHeight = useBottomTabBarHeight();
 
-  const favorites = useMemo(() => list.filter((n) => isFav(n.id)), [list, isFav]);
+  const [query, setQuery] = useState("");
+  const timer = useRef(null);
 
-  const data = useMemo(() => {
+  const items = useMemo(() => list.filter((n) => n.creator === name), [list, name]);
+
+  const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return q ? favorites.filter((n) => n.name.toLowerCase().includes(q)) : favorites;
-  }, [favorites, query]);
+    return q ? items.filter((i) => i.name.toLowerCase().includes(q)) : items;
+  }, [items, query]);
 
   const handleSearch = (txt) => {
     if (timer.current) clearTimeout(timer.current);
@@ -41,6 +34,7 @@ export default function Favorites() {
     >
       <FocusedStatusBar barStyle="dark-content" backgroundColor={COLORS.surface} />
 
+      {/* Header */}
       <View
         style={{
           backgroundColor: COLORS.surface,
@@ -49,26 +43,9 @@ export default function Favorites() {
           padding: SIZES.large,
         }}
       >
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          <Text style={{ color: COLORS.text, fontFamily: FONTS.semiBold, fontSize: 22 }}>
-            Favorites
-          </Text>
-          {count > 0 && (
-            <TouchableOpacity
-              onPress={reset}
-              activeOpacity={0.85}
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 999,
-                borderWidth: 1,
-                borderColor: COLORS.line,
-              }}
-            >
-              <Text style={{ color: COLORS.text, fontFamily: FONTS.medium }}>Clear</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+        <Text style={{ fontFamily: FONTS.semiBold, fontSize: 22, color: COLORS.text }}>
+          {name}
+        </Text>
 
         <View
           style={{
@@ -87,7 +64,7 @@ export default function Favorites() {
             style={{ width: 18, height: 18, marginRight: 8, opacity: 0.8 }}
           />
           <TextInput
-            placeholder="Search favorites"
+            placeholder={`Search ${name}'s art`}
             placeholderTextColor={COLORS.muted}
             style={{ flex: 1, fontFamily: FONTS.regular, color: COLORS.text }}
             onChangeText={handleSearch}
@@ -98,7 +75,7 @@ export default function Favorites() {
       </View>
 
       <FlatList
-        data={data}
+        data={filtered}
         renderItem={({ item }) => <NFTCard data={item} />}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
@@ -106,13 +83,6 @@ export default function Favorites() {
           paddingBottom: tabBarHeight + 24,
           paddingTop: 8,
         }}
-        ListEmptyComponent={
-          <View style={{ alignItems: "center", marginTop: 40 }}>
-            <Text style={{ color: COLORS.muted, fontFamily: FONTS.regular }}>
-              {all.length === 0 ? "No favorites yet" : "No results"}
-            </Text>
-          </View>
-        }
       />
     </SafeAreaView>
   );

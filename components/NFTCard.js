@@ -7,9 +7,6 @@ import { SubInfo, EthPrice, NFTTitle } from "./SubInfo";
 import { RectButton, CircleButton } from "./Button";
 import { useFavorites } from "../store/favorites";
 
-const HEART_ACTIVE = "#EF4444"; // red when liked
-const HEART_DEFAULT = "#9CA3AF"; // gray by default
-
 function NFTCard({ data }) {
   const navigation = useNavigation();
   const { isFav, toggle } = useFavorites();
@@ -23,7 +20,7 @@ function NFTCard({ data }) {
           imgUrl={assets.heart}
           right={12}
           top={12}
-          tintColor={active ? HEART_ACTIVE : HEART_DEFAULT}
+          tintColor={active ? COLORS.heartActive : COLORS.heartDefault}
           handlePress={() => toggle(data.id)}
         />
       </View>

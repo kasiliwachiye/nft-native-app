@@ -23,7 +23,7 @@
 
 `pronef` is a comprehensive React Native starter that helps you build cross-platform NFT apps with speed and confidence. It ships with a modular architecture, reusable UI components, smooth navigation, centralized theming, and mock data so you can focus on product work instead of project setup. It targets iOS, Android, and web with a consistent experience.
 
-**Why pronef**
+**Why Pronef**
 
 * **Easy Cross-Platform Setup**: Unified configuration and styling for iOS, Android, and web.
 * **Reusable UI Components**: Modular cards, buttons, and detail views for rapid development.
@@ -44,7 +44,7 @@
 
 ## Installation
 
-Build `pronef` from source and install dependencies.
+Build `Pronef` from source and install dependencies.
 
 1. **Clone the repository**
 

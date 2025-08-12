@@ -1,81 +1,50 @@
 import React, { useState } from "react";
 import { View, Text } from "react-native";
-
-import { EthPrice, NFTTitle } from "./SubInfo";
 import { COLORS, SIZES, FONTS } from "../constants";
 
-const DetailsDesc = ({ data }) => {
-  const [text, setText] = useState(data.description.slice(0, 100));
-  const [readMore, setReadMore] = useState(false);
+export default function DetailsDesc({ data, initialChars = 140 }) {
+  const [expanded, setExpanded] = useState(false);
+  const short = data.description.slice(0, initialChars);
+  const body = expanded ? data.description : short;
+  const canToggle = data.description.length > initialChars;
 
   return (
-    <>
-      <View
+    <View>
+      <Text
         style={{
-          width: "100%",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
+          fontSize: SIZES.font,
+          fontFamily: FONTS.semiBold,
+          color: COLORS.text,
         }}
       >
-        <NFTTitle
-          title={data.name}
-          subTitle={data.creator}
-          titleSize={SIZES.extraLarge}
-          subTitleSize={SIZES.font}
-        />
+        Description
+      </Text>
 
-        <EthPrice price={data.price} />
-      </View>
-
-      <View style={{ marginVertical: SIZES.extraLarge * 1.5 }}>
+      <View style={{ marginTop: SIZES.base }}>
         <Text
           style={{
-            fontSize: SIZES.font,
-            fontFamily: FONTS.semiBold,
-            color: COLORS.primary,
+            color: COLORS.muted,
+            fontSize: SIZES.small,
+            fontFamily: FONTS.regular,
+            lineHeight: SIZES.large,
           }}
         >
-          Description
-        </Text>
-        <View
-          style={{
-            marginTop: SIZES.base,
-          }}
-        >
-          <Text
-            style={{
-              color: COLORS.secondary,
-              fontSize: SIZES.small,
-              fontFamily: FONTS.regular,
-              lineHeight: SIZES.large,
-            }}
-          >
-            {text}
-            {!readMore && "..."}
+          {body}
+          {canToggle && !expanded && "..."}
+          {canToggle && (
             <Text
+              onPress={() => setExpanded((s) => !s)}
               style={{
-                color: COLORS.primary,
+                color: COLORS.text,
                 fontSize: SIZES.small,
                 fontFamily: FONTS.semiBold,
               }}
-              onPress={() => {
-                if (!readMore) {
-                  setText(data.description);
-                  setReadMore(true);
-                } else {
-                  setText(data.description.slice(0, 100));
-                  setReadMore(false);
-                }
-              }}
             >
-              {readMore ? " Show Less" : " Read More"}
+              {expanded ? " Show less" : " Read more"}
             </Text>
-          </Text>
-        </View>
+          )}
+        </Text>
       </View>
-    </>
+    </View>
   );
-};
-
-export default DetailsDesc;
+}
