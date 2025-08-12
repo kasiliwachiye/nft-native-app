@@ -1,13 +1,6 @@
 import React from "react";
-import {
-  View,
-  Text,
-  SafeAreaView,
-  Image,
-  StatusBar,
-  FlatList,
-} from "react-native";
-
+import { View, Text, SafeAreaView, StatusBar, FlatList } from "react-native";
+import { Image } from "expo-image";
 import { COLORS, SIZES, assets, SHADOWS, FONTS } from "../constants";
 import {
   CircleButton,
@@ -22,7 +15,7 @@ const DetailsHeader = ({ data, navigation }) => (
   <View style={{ width: "100%", height: 373 }}>
     <Image
       source={data.image}
-      resizeMode="cover"
+      contentFit="cover"
       style={{ width: "100%", height: "100%" }}
     />
 

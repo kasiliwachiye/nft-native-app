@@ -1,7 +1,7 @@
-import { memo } from "react";
-import { View, Image, StyleSheet } from "react-native";
+import React, { memo } from "react";
+import { View, StyleSheet } from "react-native";
+import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
-
 import { COLORS, SIZES, SHADOWS, assets } from "../constants";
 import { SubInfo, EthPrice, NFTTitle } from "./SubInfo";
 import { RectButton, CircleButton } from "./Button";
@@ -12,7 +12,12 @@ function NFTCard({ data }) {
   return (
     <View style={styles.card}>
       <View style={styles.media}>
-        <Image source={data.image} resizeMode="cover" style={styles.image} />
+        <Image
+          source={data.image}
+          contentFit="cover"
+          style={styles.image}
+          transition={120}
+        />
         <CircleButton imgUrl={assets.heart} right={10} top={10} />
       </View>
 
@@ -25,7 +30,6 @@ function NFTCard({ data }) {
           titleSize={SIZES.large}
           subTitleSize={SIZES.small}
         />
-
         <View style={styles.row}>
           <EthPrice price={data.price} />
           <RectButton

@@ -1,7 +1,14 @@
+import React, { useRef } from "react";
 import { View, Text, Image, TextInput, StyleSheet } from "react-native";
 import { COLORS, FONTS, SIZES, assets } from "../constants";
 
-export default function HomeHeader({ query, onChangeSearch }) {
+export default function HomeHeader({ onSearch }) {
+  const timer = useRef(null);
+
+  const handleText = (txt) => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => onSearch?.(txt), 250);
+  };
   return (
     <View style={styles.wrap}>
       <View style={styles.row}>
@@ -33,10 +40,9 @@ export default function HomeHeader({ query, onChangeSearch }) {
         />
         <TextInput
           placeholder="Search NFTs"
-          value={query}
-          onChangeText={onChangeSearch}
+          style={{ flex: 1 }}
+          onChangeText={handleText}
           returnKeyType="search"
-          style={styles.input}
           clearButtonMode="while-editing"
         />
       </View>
