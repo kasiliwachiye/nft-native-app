@@ -10,47 +10,40 @@ const DetailsBid = ({ bid }) => {
       style={{
         width: "100%",
         flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
-        marginVertical: SIZES.base,
-        paddingHorizontal: SIZES.base,
+        paddingHorizontal: SIZES.large,
+        paddingVertical: SIZES.base + 2,
       }}
       key={bid.id}
     >
       <Image
         source={bid.image}
-        resizeMode="contain"
-        style={{ width: 48, height: 48 }}
-      />
-
-      <View
+        resizeMode="cover"
         style={{
-          flex: 1,
-          alignItems: "center",
-          paddingHorizontal: SIZES.base,
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          borderWidth: 1,
+          borderColor: COLORS.line,
         }}
-      >
+      />
+      <View style={{ flex: 1, paddingHorizontal: SIZES.base }}>
         <Text
-          style={{
-            fontFamily: FONTS.semiBold,
-            fontSize: SIZES.small,
-            color: COLORS.primary,
-          }}
+          style={{ fontFamily: FONTS.medium, fontSize: 13, color: COLORS.text }}
         >
-          Bid placed by {bid.name}
+          Bid by {bid.name}
         </Text>
         <Text
           style={{
             fontFamily: FONTS.regular,
-            fontSize: SIZES.small - 2,
-            color: COLORS.secondary,
-            marginTop: 3,
+            fontSize: 12,
+            color: COLORS.muted,
+            marginTop: 2,
           }}
         >
           {bid.date}
         </Text>
       </View>
-
       <EthPrice price={bid.price} />
     </View>
   );

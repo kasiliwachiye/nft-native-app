@@ -1,5 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, Image } from "react-native";
+
 import { COLORS, SIZES, FONTS, SHADOWS } from "../constants";
 
 export const CircleButton = ({
@@ -13,23 +14,25 @@ export const CircleButton = ({
   return (
     <TouchableOpacity
       style={{
-        width: 40,
-        height: 40,
-        backgroundColor: COLORS.white,
+        width: 38,
+        height: 38,
+        backgroundColor: COLORS.surface,
         position: "absolute",
-        borderRadius: SIZES.extraLarge,
+        borderRadius: 19,
         alignItems: "center",
         justifyContent: "center",
-        ...SHADOWS.light,
+        borderWidth: 1,
+        borderColor: COLORS.line,
+        ...SHADOWS.soft,
         ...props,
       }}
       onPress={press}
-      activeOpacity={0.8}
+      activeOpacity={0.85}
     >
       <Image
         source={imgUrl}
         resizeMode="contain"
-        style={{ width: 24, height: 24, tintColor }}
+        style={{ width: 22, height: 22, tintColor }}
       />
     </TouchableOpacity>
   );
@@ -41,6 +44,7 @@ export const RectButton = ({
   handlePress,
   onPress,
   children,
+  style,
   ...props
 }) => {
   const press = onPress ?? handlePress;
@@ -48,23 +52,25 @@ export const RectButton = ({
     <TouchableOpacity
       style={{
         backgroundColor: COLORS.primary,
-        padding: SIZES.small,
-        borderRadius: SIZES.extraLarge,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 999,
         minWidth,
-        ...props,
+        alignItems: "center",
+        ...style,
       }}
       onPress={press}
-      activeOpacity={0.85}
+      activeOpacity={0.88}
+      {...props}
     >
       <Text
         style={{
           fontFamily: FONTS.semiBold,
           fontSize,
           color: COLORS.white,
-          textAlign: "center",
         }}
       >
-        {children ?? "Place a bid"}
+        {children ?? "Continue"}
       </Text>
     </TouchableOpacity>
   );

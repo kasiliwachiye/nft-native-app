@@ -1,9 +1,20 @@
 export const COLORS = {
-  primary: "#001F2D",
-  secondary: "#4D626C",
+  brand: "#222428", // charcoal
+  primary: "#222428", // buttons and highlights
+  secondary: "#8A8F98", // cool gray for secondary text
 
-  white: "#FFF",
-  gray: "#74858C",
+  // Typography
+  text: "#111315", // near-black
+  muted: "#6B7280", // slate gray
+
+  // Surfaces
+  bg: "#F6F7F9", // app background
+  surface: "#FFFFFF", // cards and sheets
+  line: "#E6E8EC", // dividers and strokes
+
+  // Utility
+  white: "#FFFFFF",
+  gray: "#F2F3F5", // subtle fills
 };
 
 export const SIZES = {
@@ -13,6 +24,8 @@ export const SIZES = {
   medium: 16,
   large: 18,
   extraLarge: 24,
+  radius: 14,
+  radiusLg: 18,
 };
 
 export const FONTS = {
@@ -24,37 +37,18 @@ export const FONTS = {
 };
 
 export const SHADOWS = {
-  light: {
-    shadowColor: COLORS.gray,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-
+  card: {
+    shadowColor: "#000000",
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
     elevation: 3,
   },
-  medium: {
-    shadowColor: COLORS.gray,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.29,
-    shadowRadius: 4.65,
-
-    elevation: 7,
-  },
-  dark: {
-    shadowColor: COLORS.gray,
-    shadowOffset: {
-      width: 0,
-      height: 7,
-    },
-    shadowOpacity: 0.41,
-    shadowRadius: 9.11,
-
-    elevation: 14,
+  soft: {
+    shadowColor: "#000000",
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
 };

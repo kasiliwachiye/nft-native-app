@@ -7,6 +7,9 @@ import { SubInfo, EthPrice, NFTTitle } from "./SubInfo";
 import { RectButton, CircleButton } from "./Button";
 import { useFavorites } from "../store/favorites";
 
+const HEART_ACTIVE = "#EF4444"; // red when liked
+const HEART_DEFAULT = "#9CA3AF"; // gray by default
+
 function NFTCard({ data }) {
   const navigation = useNavigation();
   const { isFav, toggle } = useFavorites();
@@ -14,34 +17,37 @@ function NFTCard({ data }) {
 
   return (
     <View style={styles.card}>
-      <View style={styles.media}>
-        <Image source={data.image} resizeMode="cover" style={styles.image} />
+      <View style={styles.mediaWrap}>
+        <Image source={data.image} resizeMode="cover" style={styles.media} />
         <CircleButton
           imgUrl={assets.heart}
-          right={10}
-          top={10}
-          tintColor={active ? "#e11d48" : undefined}
+          right={12}
+          top={12}
+          tintColor={active ? HEART_ACTIVE : HEART_DEFAULT}
           handlePress={() => toggle(data.id)}
         />
       </View>
 
-      <SubInfo endAt={data.endAt} />
-
-      <View style={styles.body}>
+      <View style={styles.content}>
         <NFTTitle
           title={data.name}
           subTitle={data.creator}
-          titleSize={SIZES.large}
-          subTitleSize={SIZES.small}
+          titleSize={16}
+          subTitleSize={12}
         />
         <View style={styles.row}>
           <EthPrice price={data.price} />
-          <RectButton
-            minWidth={120}
-            fontSize={SIZES.font}
-            onPress={() => navigation.navigate("Details", { id: data.id })}
-          />
+          <SubInfo endAt={data.endAt} compact />
         </View>
+
+        <RectButton
+          minWidth={120}
+          fontSize={SIZES.font}
+          onPress={() => navigation.navigate("Details", { id: data.id })}
+          style={{ marginTop: 10 }}
+        >
+          View details
+        </RectButton>
       </View>
     </View>
   );
@@ -51,24 +57,28 @@ export default memo(NFTCard);
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: COLORS.white,
-    borderRadius: SIZES.font,
-    marginBottom: SIZES.extraLarge,
-    margin: SIZES.base,
-    ...SHADOWS.dark,
+    backgroundColor: COLORS.surface,
+    borderRadius: SIZES.radiusLg,
+    marginHorizontal: SIZES.large,
+    marginTop: SIZES.large,
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    ...SHADOWS.card,
   },
-  media: { width: "100%", height: 250 },
-  image: {
+  mediaWrap: {
     width: "100%",
-    height: "100%",
-    borderTopLeftRadius: SIZES.font,
-    borderTopRightRadius: SIZES.font,
+    aspectRatio: 4 / 3,
+    borderTopLeftRadius: SIZES.radiusLg,
+    borderTopRightRadius: SIZES.radiusLg,
+    overflow: "hidden",
+    backgroundColor: COLORS.gray,
   },
-  body: { width: "100%", padding: SIZES.font },
+  media: { width: "100%", height: "100%" },
+  content: { padding: SIZES.large },
   row: {
-    marginTop: SIZES.font,
+    marginTop: 8,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
   },
 });

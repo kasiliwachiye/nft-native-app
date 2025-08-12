@@ -26,11 +26,11 @@ export default function Favorites() {
     () => list.filter((n) => isFav(n.id)),
     [list, isFav]
   );
-
   const data = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return favorites;
-    return favorites.filter((n) => n.name.toLowerCase().includes(q));
+    return q
+      ? favorites.filter((n) => n.name.toLowerCase().includes(q))
+      : favorites;
   }, [favorites, query]);
 
   const handleSearch = (txt) => {
@@ -39,15 +39,21 @@ export default function Favorites() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
-      <FocusedStatusBar backgroundColor={COLORS.primary} />
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: COLORS.bg }}
+      edges={["left", "right"]}
+    >
+      <FocusedStatusBar
+        barStyle="dark-content"
+        backgroundColor={COLORS.surface}
+      />
 
       <View
         style={{
-          backgroundColor: COLORS.primary,
-          paddingHorizontal: SIZES.font,
-          paddingBottom: SIZES.font,
-          paddingTop: SIZES.font,
+          backgroundColor: COLORS.surface,
+          borderBottomWidth: 1,
+          borderColor: COLORS.line,
+          padding: SIZES.large,
         }}
       >
         <View
@@ -57,7 +63,13 @@ export default function Favorites() {
             alignItems: "center",
           }}
         >
-          <Text style={{ color: "#fff", fontFamily: FONTS.bold, fontSize: 22 }}>
+          <Text
+            style={{
+              color: COLORS.text,
+              fontFamily: FONTS.semiBold,
+              fontSize: 22,
+            }}
+          >
             Favorites
           </Text>
           {count > 0 && (
@@ -69,76 +81,60 @@ export default function Favorites() {
                 paddingVertical: 6,
                 borderRadius: 999,
                 borderWidth: 1,
-                borderColor: "rgba(255,255,255,0.25)",
+                borderColor: COLORS.line,
               }}
             >
-              <Text style={{ color: "#fff", fontFamily: FONTS.medium }}>
+              <Text style={{ color: COLORS.text, fontFamily: FONTS.medium }}>
                 Clear
               </Text>
             </TouchableOpacity>
           )}
         </View>
 
-        <View style={{ marginTop: SIZES.font }}>
-          <View
-            style={{
-              width: "100%",
-              borderRadius: SIZES.font,
-              backgroundColor: COLORS.gray,
-              flexDirection: "row",
-              alignItems: "center",
-              paddingHorizontal: SIZES.font,
-              paddingVertical: SIZES.small - 2,
-            }}
-          >
-            <Image
-              source={assets.search}
-              resizeMode="contain"
-              style={{ width: 20, height: 20, marginRight: SIZES.base }}
-            />
-            <TextInput
-              placeholder="Search favorites"
-              style={{ flex: 1 }}
-              onChangeText={handleSearch}
-              returnKeyType="search"
-              clearButtonMode="while-editing"
-            />
-          </View>
+        <View
+          style={{
+            marginTop: SIZES.base,
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: COLORS.gray,
+            borderRadius: 999,
+            paddingHorizontal: 14,
+            paddingVertical: 10,
+          }}
+        >
+          <Image
+            source={assets.search}
+            resizeMode="contain"
+            style={{ width: 18, height: 18, marginRight: 8, opacity: 0.8 }}
+          />
+          <TextInput
+            placeholder="Search favorites"
+            placeholderTextColor={COLORS.muted}
+            style={{ flex: 1, fontFamily: FONTS.regular, color: COLORS.text }}
+            onChangeText={handleSearch}
+            returnKeyType="search"
+            clearButtonMode="while-editing"
+          />
         </View>
       </View>
 
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={data}
-          renderItem={({ item }) => <NFTCard data={item} />}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: tabBarHeight + 16 }}
-          ListEmptyComponent={
-            <View style={{ alignItems: "center", marginTop: 40 }}>
-              <Text
-                style={{ color: COLORS.secondary, fontFamily: FONTS.regular }}
-              >
-                {all.length === 0 ? "No favorites yet" : "No matches"}
-              </Text>
-            </View>
-          }
-        />
-      </View>
-
-      <View
-        style={{
-          position: "absolute",
-          top: 0,
-          bottom: 0,
-          right: 0,
-          left: 0,
-          zIndex: -1,
+      <FlatList
+        data={data}
+        renderItem={({ item }) => <NFTCard data={item} />}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: tabBarHeight + 24,
+          paddingTop: 8,
         }}
-      >
-        <View style={{ height: 220, backgroundColor: COLORS.primary }} />
-        <View style={{ flex: 1, backgroundColor: COLORS.white }} />
-      </View>
+        ListEmptyComponent={
+          <View style={{ alignItems: "center", marginTop: 40 }}>
+            <Text style={{ color: COLORS.muted, fontFamily: FONTS.regular }}>
+              {all.length === 0 ? "No favorites yet" : "No results"}
+            </Text>
+          </View>
+        }
+      />
     </SafeAreaView>
   );
 }

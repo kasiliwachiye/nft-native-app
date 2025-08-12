@@ -18,7 +18,9 @@ import { useUser } from "../store/user";
 import BidModal from "../components/BidModal";
 
 const DetailsHeader = ({ data, navigation }) => (
-  <View style={{ width: "100%", height: 373 }}>
+  <View
+    style={{ width: "100%", aspectRatio: 4 / 3, backgroundColor: COLORS.gray }}
+  >
     <Image
       source={data.image}
       resizeMode="cover"
@@ -67,29 +69,29 @@ export default function Details({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: COLORS.bg }}
+      edges={["left", "right"]}
+    >
       <FocusedStatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
         translucent
       />
 
+      {/* Sticky CTA */}
       <View
         style={{
-          width: "100%",
           position: "absolute",
-          bottom: tabBarHeight + 16,
-          paddingVertical: SIZES.font,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(255,255,255,0.5)",
-          zIndex: 1,
           left: 0,
           right: 0,
+          bottom: tabBarHeight + 16,
+          alignItems: "center",
+          zIndex: 1,
         }}
       >
         <RectButton
-          minWidth={170}
+          minWidth={220}
           fontSize={SIZES.large}
           onPress={() => setShowBid(true)}
           disabled={ended}
@@ -101,27 +103,58 @@ export default function Details({ route, navigation }) {
 
       <FlatList
         data={data.bids}
-        renderItem={({ item }) => <DetailsBid bid={item} />}
         keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <DetailsBid bid={item} />}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: tabBarHeight + SIZES.extraLarge * 2,
-        }}
+        contentContainerStyle={{ paddingBottom: tabBarHeight + 120 }}
         ListHeaderComponent={() => (
           <>
             <DetailsHeader data={data} navigation={navigation} />
-            <SubInfo endAt={data.endAt} />
-            <View style={{ padding: SIZES.font }}>
+            {/* Meta section */}
+            <View
+              style={{
+                backgroundColor: COLORS.surface,
+                padding: SIZES.large,
+                borderTopWidth: 1,
+                borderBottomWidth: 1,
+                borderColor: COLORS.line,
+              }}
+            >
+              <SubInfo endAt={data.endAt} />
+              <View style={{ height: 12 }} />
+              <Text
+                style={{
+                  fontFamily: FONTS.semiBold,
+                  fontSize: 20,
+                  color: COLORS.text,
+                }}
+              >
+                {data.name}
+              </Text>
+              <Text
+                style={{
+                  fontFamily: FONTS.regular,
+                  color: COLORS.muted,
+                  marginTop: 4,
+                }}
+              >
+                by {data.creator}
+              </Text>
+            </View>
+
+            {/* Description */}
+            <View style={{ padding: SIZES.large }}>
               <DetailsDesc data={data} />
               {data.bids.length > 0 && (
                 <Text
                   style={{
+                    marginTop: 8,
                     fontSize: SIZES.font,
                     fontFamily: FONTS.semiBold,
-                    color: COLORS.primary,
+                    color: COLORS.text,
                   }}
                 >
-                  Current Bid
+                  Current bids
                 </Text>
               )}
             </View>

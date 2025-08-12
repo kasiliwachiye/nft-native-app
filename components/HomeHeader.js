@@ -5,14 +5,11 @@ import { useNavigation } from "@react-navigation/native";
 
 import { COLORS, FONTS, SIZES, assets } from "../constants";
 import { useWallet } from "../store/wallet";
-import { useUser } from "../store/user";
 
 export default function HomeHeader({ onSearch }) {
   const insets = useSafeAreaInsets();
   const nav = useNavigation();
   const { balance } = useWallet();
-  const { user } = useUser();
-
   const timer = useRef(null);
 
   const handleText = (txt) => {
@@ -23,105 +20,98 @@ export default function HomeHeader({ onSearch }) {
   return (
     <View
       style={{
-        backgroundColor: COLORS.primary,
-        paddingHorizontal: SIZES.font,
-        paddingBottom: SIZES.font,
-        paddingTop: insets.top + SIZES.font,
+        backgroundColor: COLORS.surface,
+        paddingTop: insets.top + SIZES.base,
+        paddingHorizontal: SIZES.large,
+        paddingBottom: SIZES.base,
+        borderBottomWidth: 1,
+        borderColor: COLORS.line,
       }}
     >
       <View
         style={{
           flexDirection: "row",
-          justifyContent: "space-between",
           alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: SIZES.base,
         }}
       >
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => nav.navigate("WalletTab")}
-          style={{ flexDirection: "row", alignItems: "center" }}
+        <Text
+          style={{
+            fontFamily: FONTS.semiBold,
+            fontSize: 20,
+            color: COLORS.text,
+          }}
         >
-          <Image
-            source={assets.eth}
-            resizeMode="contain"
-            style={{ width: 18, height: 18, marginRight: 6 }}
-          />
-          <Text style={{ color: "#fff", fontFamily: FONTS.medium }}>
-            {balance.toFixed(2)}
-          </Text>
-        </TouchableOpacity>
+          Discover
+        </Text>
 
-        <TouchableOpacity
-          style={{ width: 45, height: 45 }}
-          activeOpacity={0.8}
-          onPress={() => nav.navigate("ProfileTab")}
-        >
-          <Image
-            source={assets.person01}
-            resizeMode="contain"
-            style={{ width: "100%", height: "100%" }}
-          />
-          <Image
-            source={assets.badge}
-            resizeMode="contain"
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => nav.navigate("WalletTab")}
             style={{
-              position: "absolute",
-              width: 15,
-              height: 15,
-              bottom: 0,
-              right: 0,
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              borderRadius: 999,
+              backgroundColor: COLORS.gray,
             }}
-          />
-        </TouchableOpacity>
-      </View>
+          >
+            <Text style={{ color: COLORS.text, fontFamily: FONTS.medium }}>
+              {balance.toFixed(2)}
+            </Text>
+          </TouchableOpacity>
 
-      <View style={{ marginVertical: SIZES.font }}>
-        <Text
-          style={{
-            fontFamily: FONTS.regular,
-            fontSize: SIZES.small,
-            color: COLORS.white,
-          }}
-        >
-          Hello {user?.name} 👋
-        </Text>
-        <Text
-          style={{
-            fontFamily: FONTS.bold,
-            fontSize: SIZES.large,
-            color: COLORS.white,
-            marginTop: SIZES.base / 2,
-          }}
-        >
-          Let’s find masterpiece Art
-        </Text>
-      </View>
-
-      <View style={{ marginTop: SIZES.font }}>
-        <View
-          style={{
-            width: "100%",
-            borderRadius: SIZES.font,
-            backgroundColor: COLORS.gray,
-            flexDirection: "row",
-            alignItems: "center",
-            paddingHorizontal: SIZES.font,
-            paddingVertical: SIZES.small - 2,
-          }}
-        >
-          <Image
-            source={assets.search}
-            resizeMode="contain"
-            style={{ width: 20, height: 20, marginRight: SIZES.base }}
-          />
-          <TextInput
-            placeholder="Search NFTs"
-            style={{ flex: 1 }}
-            onChangeText={handleText}
-            returnKeyType="search"
-            clearButtonMode="while-editing"
-          />
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => nav.navigate("ProfileTab")}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              overflow: "hidden",
+              borderWidth: 1,
+              borderColor: COLORS.line,
+            }}
+          >
+            <Image
+              source={assets.person01}
+              resizeMode="cover"
+              style={{ width: "100%", height: "100%" }}
+            />
+          </TouchableOpacity>
         </View>
+      </View>
+
+      {/* Search pill */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: COLORS.gray,
+          borderRadius: 999,
+          paddingHorizontal: 14,
+          paddingVertical: 10,
+        }}
+      >
+        <Image
+          source={assets.search}
+          resizeMode="contain"
+          style={{ width: 18, height: 18, marginRight: 8, opacity: 0.8 }}
+        />
+        <TextInput
+          placeholder="Search art, creators, prices"
+          placeholderTextColor={COLORS.muted}
+          style={{
+            flex: 1,
+            fontFamily: FONTS.regular,
+            color: COLORS.text,
+            fontSize: 16,
+          }}
+          onChangeText={handleText}
+          returnKeyType="search"
+          clearButtonMode="while-editing"
+        />
       </View>
     </View>
   );

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { View, Image, Text } from "react-native";
+
 import { SIZES, FONTS, COLORS, SHADOWS, assets } from "../constants";
 
 export const NFTTitle = ({ title, subTitle, titleSize, subTitleSize }) => (
@@ -8,7 +9,7 @@ export const NFTTitle = ({ title, subTitle, titleSize, subTitleSize }) => (
       style={{
         fontFamily: FONTS.semiBold,
         fontSize: titleSize,
-        color: COLORS.primary,
+        color: COLORS.text,
       }}
     >
       {title}
@@ -17,27 +18,32 @@ export const NFTTitle = ({ title, subTitle, titleSize, subTitleSize }) => (
       style={{
         fontFamily: FONTS.regular,
         fontSize: subTitleSize,
-        color: COLORS.primary,
+        color: COLORS.muted,
       }}
     >
-      by {subTitle}
+      {subTitle}
     </Text>
   </View>
 );
 
 export const EthPrice = ({ price }) => (
-  <View style={{ flexDirection: "row", alignItems: "center" }}>
+  <View
+    style={{
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 999,
+      backgroundColor: COLORS.gray,
+    }}
+  >
     <Image
       source={assets.eth}
       resizeMode="contain"
-      style={{ width: 20, height: 20, marginRight: 2 }}
+      style={{ width: 16, height: 16, marginRight: 4 }}
     />
     <Text
-      style={{
-        fontFamily: FONTS.medium,
-        fontSize: SIZES.font,
-        color: COLORS.primary,
-      }}
+      style={{ fontFamily: FONTS.medium, fontSize: 13, color: COLORS.text }}
     >
       {price}
     </Text>
@@ -47,8 +53,15 @@ export const EthPrice = ({ price }) => (
 const ImageCmp = ({ imgUrl, index }) => (
   <Image
     source={imgUrl}
-    resizeMode="contain"
-    style={{ width: 48, height: 48, marginLeft: index === 0 ? 0 : -SIZES.font }}
+    resizeMode="cover"
+    style={{
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: COLORS.surface,
+      marginLeft: index === 0 ? 0 : -10,
+    }}
   />
 );
 
@@ -80,53 +93,32 @@ export const EndDate = ({ endAt }) => {
   }, []);
   const remain = useMemo(() => formatRemain((endAt || 0) - now), [endAt, now]);
 
+  const ended = remain === "Ended";
   return (
     <View
       style={{
-        paddingHorizontal: SIZES.font,
-        paddingVertical: SIZES.base,
-        backgroundColor: COLORS.white,
-        borderRadius: SIZES.font,
-        justifyContent: "center",
-        alignItems: "center",
-        ...SHADOWS.light,
-        elevation: 1,
-        maxWidth: "50%",
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 999,
+        backgroundColor: ended ? "#fee2e2" : COLORS.gray,
       }}
     >
       <Text
         style={{
-          fontFamily: FONTS.regular,
-          fontSize: SIZES.small,
-          color: COLORS.primary,
+          fontFamily: FONTS.medium,
+          fontSize: 12,
+          color: ended ? "#991b1b" : COLORS.text,
         }}
       >
-        Ending in
-      </Text>
-      <Text
-        style={{
-          fontFamily: FONTS.semiBold,
-          fontSize: SIZES.medium,
-          color: COLORS.primary,
-        }}
-      >
-        {remain}
+        {ended ? "Ended" : `Ends in ${remain}`}
       </Text>
     </View>
   );
 };
 
-export const SubInfo = ({ endAt }) => (
-  <View
-    style={{
-      width: "100%",
-      paddingHorizontal: SIZES.font,
-      marginTop: -SIZES.extraLarge,
-      flexDirection: "row",
-      justifyContent: "space-between",
-    }}
-  >
-    <People />
+export const SubInfo = ({ endAt, compact }) => (
+  <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+    {!compact && <People />}
     <EndDate endAt={endAt} />
   </View>
 );
