@@ -1,88 +1,134 @@
 import React, { useRef } from "react";
-import { View, Text, Image, TextInput, StyleSheet } from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
+
 import { COLORS, FONTS, SIZES, assets } from "../constants";
 
-export default function HomeHeader({ onSearch }) {
+export default function HomeHeader({
+  onSearch,
+  favoritesOnly,
+  onToggleFavorites,
+  favCount,
+}) {
+  // light debounce so filtering is not too chatty
   const timer = useRef(null);
-
   const handleText = (txt) => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => onSearch?.(txt), 250);
   };
+
   return (
-    <View style={styles.wrap}>
-      <View style={styles.row}>
-        <Image source={assets.logo} resizeMode="contain" style={styles.logo} />
-        <View style={styles.avatarWrap}>
+    <View style={{ backgroundColor: COLORS.primary, padding: SIZES.font }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Image
+          source={assets.logo}
+          resizeMode="contain"
+          style={{ width: 90, height: 25 }}
+        />
+
+        <View style={{ width: 45, height: 45 }}>
           <Image
             source={assets.person01}
             resizeMode="contain"
-            style={styles.avatar}
+            style={{ width: "100%", height: "100%" }}
           />
           <Image
             source={assets.badge}
             resizeMode="contain"
-            style={styles.badge}
+            style={{
+              position: "absolute",
+              width: 15,
+              height: 15,
+              bottom: 0,
+              right: 0,
+            }}
           />
         </View>
       </View>
 
-      <View style={styles.greeting}>
-        <Text style={styles.hello}>Hello Victoria 👋</Text>
-        <Text style={styles.title}>Let’s find masterpiece Art</Text>
+      <View style={{ marginVertical: SIZES.font }}>
+        <Text
+          style={{
+            fontFamily: FONTS.regular,
+            fontSize: SIZES.small,
+            color: COLORS.white,
+          }}
+        >
+          Hello Victoria 👋
+        </Text>
+
+        <Text
+          style={{
+            fontFamily: FONTS.bold,
+            fontSize: SIZES.large,
+            color: COLORS.white,
+            marginTop: SIZES.base / 2,
+          }}
+        >
+          Let’s find masterpiece Art
+        </Text>
       </View>
 
-      <View style={styles.searchWrap}>
-        <Image
-          source={assets.search}
-          resizeMode="contain"
-          style={styles.searchIcon}
-        />
-        <TextInput
-          placeholder="Search NFTs"
-          style={{ flex: 1 }}
-          onChangeText={handleText}
-          returnKeyType="search"
-          clearButtonMode="while-editing"
-        />
+      <View style={{ marginTop: SIZES.font }}>
+        <View
+          style={{
+            width: "100%",
+            borderRadius: SIZES.font,
+            backgroundColor: COLORS.gray,
+            flexDirection: "row",
+            alignItems: "center",
+            paddingHorizontal: SIZES.font,
+            paddingVertical: SIZES.small - 2,
+          }}
+        >
+          <Image
+            source={assets.search}
+            resizeMode="contain"
+            style={{ width: 20, height: 20, marginRight: SIZES.base }}
+          />
+          <TextInput
+            placeholder="Search NFTs"
+            style={{ flex: 1 }}
+            onChangeText={handleText}
+            returnKeyType="search"
+            clearButtonMode="while-editing"
+          />
+        </View>
       </View>
+
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={onToggleFavorites}
+        style={{
+          alignSelf: "flex-start",
+          marginTop: 8,
+          paddingHorizontal: 12,
+          paddingVertical: 6,
+          borderRadius: SIZES.font,
+          backgroundColor: favoritesOnly
+            ? "rgba(255,255,255,0.18)"
+            : "transparent",
+          borderWidth: 1,
+          borderColor: "rgba(255,255,255,0.25)",
+        }}
+      >
+        <Text
+          style={{
+            fontFamily: FONTS.medium,
+            fontSize: SIZES.small,
+            color: COLORS.white,
+          }}
+        >
+          {favoritesOnly
+            ? `Showing Favorites (${favCount})`
+            : `Favorites (${favCount})`}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: { backgroundColor: COLORS.primary, padding: SIZES.font },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  logo: { width: 90, height: 25 },
-  avatarWrap: { width: 45, height: 45 },
-  avatar: { width: "100%", height: "100%" },
-  badge: { position: "absolute", width: 15, height: 15, bottom: 0, right: 0 },
-  greeting: { marginVertical: SIZES.font },
-  hello: {
-    fontFamily: FONTS.regular,
-    fontSize: SIZES.small,
-    color: COLORS.white,
-  },
-  title: {
-    fontFamily: FONTS.bold,
-    fontSize: SIZES.large,
-    color: COLORS.white,
-    marginTop: SIZES.base / 2,
-  },
-  searchWrap: {
-    marginTop: SIZES.font,
-    width: "100%",
-    borderRadius: SIZES.font,
-    backgroundColor: COLORS.gray,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: SIZES.font,
-    paddingVertical: SIZES.small - 2,
-  },
-  searchIcon: { width: 20, height: 20, marginRight: SIZES.base },
-  input: { flex: 1 },
-});

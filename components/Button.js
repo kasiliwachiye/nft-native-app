@@ -1,17 +1,37 @@
-import { Pressable, Text, Image, StyleSheet } from "react-native";
+import React from "react";
+import { TouchableOpacity, Text, Image } from "react-native";
 import { COLORS, SIZES, FONTS, SHADOWS } from "../constants";
 
 export const CircleButton = ({
   imgUrl,
   handlePress,
   onPress,
-  ...styleProps
+  tintColor,
+  ...props
 }) => {
   const press = onPress ?? handlePress;
   return (
-    <Pressable style={[styles.circle, styleProps]} onPress={press} hitSlop={8}>
-      <Image source={imgUrl} resizeMode="contain" style={styles.circleIcon} />
-    </Pressable>
+    <TouchableOpacity
+      style={{
+        width: 40,
+        height: 40,
+        backgroundColor: COLORS.white,
+        position: "absolute",
+        borderRadius: SIZES.extraLarge,
+        alignItems: "center",
+        justifyContent: "center",
+        ...SHADOWS.light,
+        ...props,
+      }}
+      onPress={press}
+      activeOpacity={0.8}
+    >
+      <Image
+        source={imgUrl}
+        resizeMode="contain"
+        style={{ width: 24, height: 24, tintColor }}
+      />
+    </TouchableOpacity>
   );
 };
 
@@ -20,36 +40,32 @@ export const RectButton = ({
   fontSize,
   handlePress,
   onPress,
-  ...styleProps
+  children,
+  ...props
 }) => {
   const press = onPress ?? handlePress;
   return (
-    <Pressable style={[styles.rect, { minWidth }, styleProps]} onPress={press}>
-      <Text style={[styles.rectText, { fontSize }]}>Place a bid</Text>
-    </Pressable>
+    <TouchableOpacity
+      style={{
+        backgroundColor: COLORS.primary,
+        padding: SIZES.small,
+        borderRadius: SIZES.extraLarge,
+        minWidth,
+        ...props,
+      }}
+      onPress={press}
+      activeOpacity={0.85}
+    >
+      <Text
+        style={{
+          fontFamily: FONTS.semiBold,
+          fontSize,
+          color: COLORS.white,
+          textAlign: "center",
+        }}
+      >
+        {children ?? "Place a bid"}
+      </Text>
+    </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  circle: {
-    width: 40,
-    height: 40,
-    backgroundColor: COLORS.white,
-    position: "absolute",
-    borderRadius: SIZES.extraLarge,
-    alignItems: "center",
-    justifyContent: "center",
-    ...SHADOWS.light,
-  },
-  circleIcon: { width: 24, height: 24 },
-  rect: {
-    backgroundColor: COLORS.primary,
-    padding: SIZES.small,
-    borderRadius: SIZES.extraLarge,
-  },
-  rectText: {
-    fontFamily: FONTS.semiBold,
-    color: COLORS.white,
-    textAlign: "center",
-  },
-});

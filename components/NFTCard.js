@@ -1,24 +1,28 @@
 import React, { memo } from "react";
-import { View, StyleSheet } from "react-native";
-import { Image } from "expo-image";
+import { View, Image, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+
 import { COLORS, SIZES, SHADOWS, assets } from "../constants";
 import { SubInfo, EthPrice, NFTTitle } from "./SubInfo";
 import { RectButton, CircleButton } from "./Button";
+import { useFavorites } from "../store/favorites";
 
 function NFTCard({ data }) {
   const navigation = useNavigation();
+  const { isFav, toggle } = useFavorites();
+  const active = isFav(data.id);
 
   return (
     <View style={styles.card}>
       <View style={styles.media}>
-        <Image
-          source={data.image}
-          contentFit="cover"
-          style={styles.image}
-          transition={120}
+        <Image source={data.image} resizeMode="cover" style={styles.image} />
+        <CircleButton
+          imgUrl={assets.heart}
+          right={10}
+          top={10}
+          tintColor={active ? "#e11d48" : undefined}
+          handlePress={() => toggle(data.id)}
         />
-        <CircleButton imgUrl={assets.heart} right={10} top={10} />
       </View>
 
       <SubInfo />
@@ -30,6 +34,7 @@ function NFTCard({ data }) {
           titleSize={SIZES.large}
           subTitleSize={SIZES.small}
         />
+
         <View style={styles.row}>
           <EthPrice price={data.price} />
           <RectButton

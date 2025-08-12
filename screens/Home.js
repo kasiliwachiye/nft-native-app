@@ -1,67 +1,70 @@
-import { useMemo, useState, useCallback } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useMemo, useState } from "react";
+import { View, SafeAreaView, FlatList } from "react-native";
 
 import { NFTCard, HomeHeader, FocusedStatusBar } from "../components";
-import { COLORS, NFTData, SIZES } from "../constants";
+import { COLORS, NFTData } from "../constants";
+import { useFavorites } from "../store/favorites";
 
-export default function Home() {
-  const [query, setQuery] = useState("");
+const Home = () => {
+  const [nftData, setNftData] = useState(NFTData);
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const { isFav, count } = useFavorites();
 
-  const data = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return NFTData;
-    return NFTData.filter((it) => it.name.toLowerCase().includes(q));
-  }, [query]);
+  const handleSearch = (value) => {
+    if (!value || value.length === 0) {
+      setNftData(NFTData);
+      return;
+    }
 
-  const renderItem = useCallback(({ item }) => <NFTCard data={item} />, []);
-  const keyExtractor = useCallback((item) => item.id, []);
+    const filteredData = NFTData.filter((item) =>
+      item.name.toLowerCase().includes(value.toLowerCase())
+    );
+
+    setNftData(filteredData.length === 0 ? NFTData : filteredData);
+  };
+
+  const data = useMemo(
+    () => (favoritesOnly ? nftData.filter((it) => isFav(it.id)) : nftData),
+    [favoritesOnly, nftData, isFav]
+  );
 
   return (
-    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
+    <SafeAreaView style={{ flex: 1 }}>
       <FocusedStatusBar backgroundColor={COLORS.primary} />
-      <View style={styles.container}>
-        <View style={styles.listLayer}>
+      <View style={{ flex: 1 }}>
+        <View style={{ zIndex: 0 }}>
           <FlatList
             data={data}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
+            renderItem={({ item }) => <NFTCard data={item} />}
+            keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
-              <HomeHeader query={query} onChangeSearch={setQuery} />
+              <HomeHeader
+                onSearch={handleSearch}
+                favoritesOnly={favoritesOnly}
+                onToggleFavorites={() => setFavoritesOnly((p) => !p)}
+                favCount={count}
+              />
             }
-            ListEmptyComponent={
-              <View style={styles.empty}>
-                {/* lightweight empty state without text dependency */}
-              </View>
-            }
-            contentContainerStyle={styles.content}
           />
         </View>
 
-        <View pointerEvents="none" style={styles.bg}>
-          <View style={styles.bgTop} />
-          <View style={styles.bgBottom} />
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            right: 0,
+            left: 0,
+            zIndex: -1,
+          }}
+        >
+          <View style={{ height: 300, backgroundColor: COLORS.primary }} />
+          <View style={{ flex: 1, backgroundColor: COLORS.white }} />
         </View>
       </View>
     </SafeAreaView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  root: { flex: 1 },
-  container: { flex: 1 },
-  listLayer: { zIndex: 0 },
-  content: { paddingBottom: SIZES.extraLarge * 2 },
-  empty: { height: 24 },
-  bg: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    right: 0,
-    left: 0,
-    zIndex: -1,
-  },
-  bgTop: { height: 300, backgroundColor: COLORS.primary },
-  bgBottom: { flex: 1, backgroundColor: COLORS.white },
-});
+export default Home;

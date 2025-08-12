@@ -1,4 +1,5 @@
 import "react-native-gesture-handler";
+import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -8,6 +9,7 @@ import { useFonts } from "expo-font";
 
 import Home from "./screens/Home";
 import Details from "./screens/Details";
+import { FavoritesProvider } from "./store/favorites";
 
 const theme = {
   ...DefaultTheme,
@@ -45,15 +47,17 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <NavigationContainer theme={theme}>
-          <Stack.Navigator
-            screenOptions={{ headerShown: false }}
-            initialRouteName="Home"
-          >
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Details" component={Details} />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <FavoritesProvider>
+          <NavigationContainer theme={theme}>
+            <Stack.Navigator
+              screenOptions={{ headerShown: false }}
+              initialRouteName="Home"
+            >
+              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="Details" component={Details} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </FavoritesProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
