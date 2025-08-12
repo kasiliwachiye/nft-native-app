@@ -1,12 +1,6 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  SafeAreaView,
-  Image,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { FocusedStatusBar } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
 import { useUser } from "../store/user";
@@ -19,7 +13,10 @@ export default function Profile() {
   const [handle, setHandle] = useState(user.handle);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "#fff" }}
+      edges={["top", "left", "right"]}
+    >
       <FocusedStatusBar barStyle="dark-content" backgroundColor="#fff" />
       <View style={{ padding: SIZES.large }}>
         <View style={{ alignItems: "center" }}>

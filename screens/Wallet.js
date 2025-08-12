@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   TextInput,
   FlatList,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { FocusedStatusBar } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
 import { useWallet } from "../store/wallet";
@@ -16,7 +16,10 @@ export default function Wallet() {
   const [amt, setAmt] = useState("");
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "#fff" }}
+      edges={["top", "left", "right"]}
+    >
       <FocusedStatusBar barStyle="dark-content" backgroundColor="#fff" />
       <View style={{ padding: SIZES.large }}>
         <Text

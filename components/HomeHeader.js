@@ -1,17 +1,18 @@
 import React, { useRef } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
-import { COLORS, FONTS, SIZES, assets } from "../constants";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { useWallet } from "../store/wallet";
 
-export default function HomeHeader({
-  onSearch,
-  favoritesOnly,
-  onToggleFavorites,
-  favCount,
-}) {
+import { COLORS, FONTS, SIZES, assets } from "../constants";
+import { useWallet } from "../store/wallet";
+import { useUser } from "../store/user";
+
+export default function HomeHeader({ onSearch }) {
+  const insets = useSafeAreaInsets();
   const nav = useNavigation();
   const { balance } = useWallet();
+  const { user } = useUser();
+
   const timer = useRef(null);
 
   const handleText = (txt) => {
@@ -20,7 +21,14 @@ export default function HomeHeader({
   };
 
   return (
-    <View style={{ backgroundColor: COLORS.primary, padding: SIZES.font }}>
+    <View
+      style={{
+        backgroundColor: COLORS.primary,
+        paddingHorizontal: SIZES.font,
+        paddingBottom: SIZES.font,
+        paddingTop: insets.top + SIZES.font,
+      }}
+    >
       <View
         style={{
           flexDirection: "row",
@@ -30,7 +38,7 @@ export default function HomeHeader({
       >
         <TouchableOpacity
           activeOpacity={0.8}
-          onPress={() => nav.navigate("Wallet")}
+          onPress={() => nav.navigate("WalletTab")}
           style={{ flexDirection: "row", alignItems: "center" }}
         >
           <Image
@@ -46,7 +54,7 @@ export default function HomeHeader({
         <TouchableOpacity
           style={{ width: 45, height: 45 }}
           activeOpacity={0.8}
-          onPress={() => nav.navigate("Profile")}
+          onPress={() => nav.navigate("ProfileTab")}
         >
           <Image
             source={assets.person01}
@@ -75,7 +83,7 @@ export default function HomeHeader({
             color: COLORS.white,
           }}
         >
-          Hello Victoria 👋
+          Hello {user?.name} 👋
         </Text>
         <Text
           style={{
@@ -115,35 +123,6 @@ export default function HomeHeader({
           />
         </View>
       </View>
-
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={onToggleFavorites}
-        style={{
-          alignSelf: "flex-start",
-          marginTop: 8,
-          paddingHorizontal: 12,
-          paddingVertical: 6,
-          borderRadius: SIZES.font,
-          backgroundColor: favoritesOnly
-            ? "rgba(255,255,255,0.18)"
-            : "transparent",
-          borderWidth: 1,
-          borderColor: "rgba(255,255,255,0.25)",
-        }}
-      >
-        <Text
-          style={{
-            fontFamily: FONTS.medium,
-            fontSize: SIZES.small,
-            color: COLORS.white,
-          }}
-        >
-          {favoritesOnly
-            ? `Showing Favorites (${favCount})`
-            : `Favorites (${favCount})`}
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 }

@@ -1,13 +1,9 @@
 import React, { useMemo, useState } from "react";
+import { View, Text, Image, StatusBar, FlatList, Alert } from "react-native";
 import {
-  View,
-  Text,
   SafeAreaView,
-  Image,
-  StatusBar,
-  FlatList,
-  Alert,
-} from "react-native";
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 import { COLORS, SIZES, assets, FONTS } from "../constants";
 import {
@@ -44,9 +40,10 @@ const DetailsHeader = ({ data, navigation }) => (
   </View>
 );
 
-const Details = ({ route, navigation }) => {
+export default function Details({ route, navigation }) {
+  const insets = useSafeAreaInsets();
   const { id: idParam, data: dataParam } = route.params || {};
-  const { list, getById, placeBid } = useNFTs();
+  const { getById, placeBid } = useNFTs();
   const { balance, canAfford, spend } = useWallet();
   const { user } = useUser();
 
@@ -72,7 +69,7 @@ const Details = ({ route, navigation }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }} edges={["left", "right", "bottom"]}>
       <FocusedStatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
@@ -83,12 +80,14 @@ const Details = ({ route, navigation }) => {
         style={{
           width: "100%",
           position: "absolute",
-          bottom: 0,
+          bottom: insets.bottom + 72, // sit above the tab bar
           paddingVertical: SIZES.font,
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "rgba(255,255,255,0.5)",
           zIndex: 1,
+          left: 0,
+          right: 0,
         }}
       >
         <RectButton
@@ -107,7 +106,9 @@ const Details = ({ route, navigation }) => {
         renderItem={({ item }) => <DetailsBid bid={item} />}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: SIZES.extraLarge * 3 }}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + SIZES.extraLarge * 3 + 90,
+        }}
         ListHeaderComponent={() => (
           <>
             <DetailsHeader data={data} navigation={navigation} />
@@ -138,6 +139,4 @@ const Details = ({ route, navigation }) => {
       />
     </SafeAreaView>
   );
-};
-
-export default Details;
+}

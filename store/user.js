@@ -6,10 +6,10 @@ const Ctx = createContext(null);
 export function UserProvider({ children }) {
   const [user, setUser] = useState({
     id: "me",
-    name: "Victoria",
-    handle: "@victoria",
+    name: "Kasili",
+    handle: "@kasili",
     avatar: assets.person01,
-    email: "victoria@example.com",
+    email: "Kasili@gmail.com",
   });
 
   const value = useMemo(

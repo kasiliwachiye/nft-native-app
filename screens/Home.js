@@ -1,16 +1,23 @@
 import React, { useMemo, useState } from "react";
-import { View, SafeAreaView, FlatList } from "react-native";
+import { View, FlatList } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 import { NFTCard, HomeHeader, FocusedStatusBar } from "../components";
 import { COLORS } from "../constants";
 import { useFavorites } from "../store/favorites";
 import { useNFTs } from "../store/nfts";
 
-const Home = () => {
+const TAB_HEIGHT = 58 + 8;
+
+export default function Home() {
   const { list } = useNFTs();
   const [query, setQuery] = useState("");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const { isFav, count } = useFavorites();
+  const insets = useSafeAreaInsets();
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -21,7 +28,7 @@ const Home = () => {
   }, [query, list, favoritesOnly, isFav]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <FocusedStatusBar backgroundColor={COLORS.primary} />
       <View style={{ flex: 1 }}>
         <View style={{ zIndex: 0 }}>
@@ -30,14 +37,10 @@ const Home = () => {
             renderItem={({ item }) => <NFTCard data={item} />}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
-            ListHeaderComponent={
-              <HomeHeader
-                onSearch={setQuery}
-                favoritesOnly={favoritesOnly}
-                onToggleFavorites={() => setFavoritesOnly((p) => !p)}
-                favCount={count}
-              />
-            }
+            contentContainerStyle={{
+              paddingBottom: insets.bottom + TAB_HEIGHT + 16,
+            }}
+            ListHeaderComponent={<HomeHeader onSearch={setQuery} />}
           />
         </View>
 
@@ -57,6 +60,4 @@ const Home = () => {
       </View>
     </SafeAreaView>
   );
-};
-
-export default Home;
+}

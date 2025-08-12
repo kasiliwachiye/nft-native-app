@@ -7,10 +7,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 
-import Home from "./screens/Home";
-import Details from "./screens/Details";
-import Profile from "./screens/Profile";
-import Wallet from "./screens/Wallet";
+import RootTabs from "./navigation/RootTabs";
 
 import { FavoritesProvider } from "./store/favorites";
 import { UserProvider } from "./store/user";
@@ -55,14 +52,8 @@ export default function App() {
             <NFTsProvider>
               <FavoritesProvider>
                 <NavigationContainer theme={theme}>
-                  <Stack.Navigator
-                    screenOptions={{ headerShown: false }}
-                    initialRouteName="Home"
-                  >
-                    <Stack.Screen name="Home" component={Home} />
-                    <Stack.Screen name="Details" component={Details} />
-                    <Stack.Screen name="Profile" component={Profile} />
-                    <Stack.Screen name="Wallet" component={Wallet} />
+                  <Stack.Navigator screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="Root" component={RootTabs} />
                   </Stack.Navigator>
                 </NavigationContainer>
               </FavoritesProvider>
