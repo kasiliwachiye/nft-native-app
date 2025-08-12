@@ -1,9 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { View, Text, Image, StatusBar, FlatList, Alert } from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import { COLORS, SIZES, assets, FONTS } from "../constants";
 import {
@@ -41,11 +39,11 @@ const DetailsHeader = ({ data, navigation }) => (
 );
 
 export default function Details({ route, navigation }) {
-  const insets = useSafeAreaInsets();
   const { id: idParam, data: dataParam } = route.params || {};
   const { getById, placeBid } = useNFTs();
   const { balance, canAfford, spend } = useWallet();
   const { user } = useUser();
+  const tabBarHeight = useBottomTabBarHeight();
 
   const data = useMemo(
     () => (dataParam && dataParam.id ? dataParam : getById(idParam)),
@@ -69,7 +67,7 @@ export default function Details({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["left", "right", "bottom"]}>
+    <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <FocusedStatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
@@ -80,7 +78,7 @@ export default function Details({ route, navigation }) {
         style={{
           width: "100%",
           position: "absolute",
-          bottom: insets.bottom + 72, // sit above the tab bar
+          bottom: tabBarHeight + 16,
           paddingVertical: SIZES.font,
           justifyContent: "center",
           alignItems: "center",
@@ -107,7 +105,7 @@ export default function Details({ route, navigation }) {
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: insets.bottom + SIZES.extraLarge * 3 + 90,
+          paddingBottom: tabBarHeight + SIZES.extraLarge * 2,
         }}
         ListHeaderComponent={() => (
           <>

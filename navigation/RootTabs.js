@@ -1,6 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS } from "../constants";
 
 import HomeStack from "./HomeStack";
@@ -11,15 +12,22 @@ import Profile from "../screens/Profile";
 const Tab = createBottomTabNavigator();
 
 export default function RootTabs() {
+  const insets = useSafeAreaInsets();
+  const bottom = Math.max(insets.bottom, 8);
+
   return (
     <Tab.Navigator
       initialRouteName="HomeTab"
-      sceneContainerStyle={{ backgroundColor: "#fff" }}
       screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: "#9aa4aa",
-        tabBarStyle: { height: 58, paddingTop: 6, paddingBottom: 8 },
+        tabBarStyle: {
+          height: 56 + bottom,
+          paddingTop: 6,
+          paddingBottom: bottom,
+        },
         tabBarIcon: ({ color, size, focused }) => {
           const map = {
             HomeTab: focused ? "home" : "home-outline",

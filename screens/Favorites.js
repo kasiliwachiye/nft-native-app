@@ -7,25 +7,20 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import { FocusedStatusBar, NFTCard } from "../components";
 import { COLORS, FONTS, SIZES, assets } from "../constants";
 import { useFavorites } from "../store/favorites";
 import { useNFTs } from "../store/nfts";
 
-const TAB_HEIGHT = 58 + 8;
-
 export default function Favorites() {
   const { list } = useNFTs();
   const { isFav, all, count, reset } = useFavorites();
-  const insets = useSafeAreaInsets();
-
   const [query, setQuery] = useState("");
   const timer = useRef(null);
+  const tabBarHeight = useBottomTabBarHeight();
 
   const favorites = useMemo(
     () => list.filter((n) => isFav(n.id)),
@@ -46,13 +41,13 @@ export default function Favorites() {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["left", "right"]}>
       <FocusedStatusBar backgroundColor={COLORS.primary} />
-      {/* Header */}
+
       <View
         style={{
           backgroundColor: COLORS.primary,
-          paddingTop: insets.top + SIZES.font,
           paddingHorizontal: SIZES.font,
           paddingBottom: SIZES.font,
+          paddingTop: SIZES.font,
         }}
       >
         <View
@@ -112,16 +107,13 @@ export default function Favorites() {
         </View>
       </View>
 
-      {/* List */}
       <View style={{ flex: 1 }}>
         <FlatList
           data={data}
           renderItem={({ item }) => <NFTCard data={item} />}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: insets.bottom + TAB_HEIGHT + 16,
-          }}
+          contentContainerStyle={{ paddingBottom: tabBarHeight + 16 }}
           ListEmptyComponent={
             <View style={{ alignItems: "center", marginTop: 40 }}>
               <Text
@@ -134,7 +126,6 @@ export default function Favorites() {
         />
       </View>
 
-      {/* Gradient background behind list to match Home look */}
       <View
         style={{
           position: "absolute",
