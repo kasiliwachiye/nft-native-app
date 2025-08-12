@@ -1,7 +1,15 @@
-import React from "react";
-import { View, Text, SafeAreaView, StatusBar, FlatList } from "react-native";
-import { Image } from "expo-image";
-import { COLORS, SIZES, assets, SHADOWS, FONTS } from "../constants";
+import React, { useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  Image,
+  StatusBar,
+  FlatList,
+  Alert,
+} from "react-native";
+
+import { COLORS, SIZES, assets, FONTS } from "../constants";
 import {
   CircleButton,
   RectButton,
@@ -10,22 +18,24 @@ import {
   DetailsBid,
   FocusedStatusBar,
 } from "../components";
+import { useNFTs } from "../store/nfts";
+import { useWallet } from "../store/wallet";
+import { useUser } from "../store/user";
+import BidModal from "../components/BidModal";
 
 const DetailsHeader = ({ data, navigation }) => (
   <View style={{ width: "100%", height: 373 }}>
     <Image
       source={data.image}
-      contentFit="cover"
+      resizeMode="cover"
       style={{ width: "100%", height: "100%" }}
     />
-
     <CircleButton
       imgUrl={assets.left}
       handlePress={() => navigation.goBack()}
       left={15}
       top={StatusBar.currentHeight + 10}
     />
-
     <CircleButton
       imgUrl={assets.heart}
       right={15}
@@ -35,14 +45,38 @@ const DetailsHeader = ({ data, navigation }) => (
 );
 
 const Details = ({ route, navigation }) => {
-  const { data } = route.params;
+  const { id: idParam, data: dataParam } = route.params || {};
+  const { list, getById, placeBid } = useNFTs();
+  const { balance, canAfford, spend } = useWallet();
+  const { user } = useUser();
+
+  const data = useMemo(
+    () => (dataParam && dataParam.id ? dataParam : getById(idParam)),
+    [dataParam, idParam, getById]
+  );
+  const [showBid, setShowBid] = useState(false);
+
+  const ended = data?.endAt && Date.now() >= data.endAt;
+
+  const handleSubmitBid = (amount) => {
+    if (!canAfford(amount)) {
+      Alert.alert(
+        "Insufficient funds",
+        `Your balance is ${balance.toFixed(2)}`
+      );
+      return;
+    }
+    spend(amount, `Bid on ${data.name}`);
+    placeBid({ id: data.id, amount, bidder: user });
+    setShowBid(false);
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <FocusedStatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
-        translucent={true}
+        translucent
       />
 
       <View
@@ -57,7 +91,15 @@ const Details = ({ route, navigation }) => {
           zIndex: 1,
         }}
       >
-        <RectButton minWidth={170} fontSize={SIZES.large} {...SHADOWS.dark} />
+        <RectButton
+          minWidth={170}
+          fontSize={SIZES.large}
+          onPress={() => setShowBid(true)}
+          disabled={ended}
+          style={{ opacity: ended ? 0.5 : 1 }}
+        >
+          {ended ? "Auction ended" : "Place a bid"}
+        </RectButton>
       </View>
 
       <FlatList
@@ -65,16 +107,13 @@ const Details = ({ route, navigation }) => {
         renderItem={({ item }) => <DetailsBid bid={item} />}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: SIZES.extraLarge * 3,
-        }}
+        contentContainerStyle={{ paddingBottom: SIZES.extraLarge * 3 }}
         ListHeaderComponent={() => (
-          <React.Fragment>
+          <>
             <DetailsHeader data={data} navigation={navigation} />
-            <SubInfo />
+            <SubInfo endAt={data.endAt} />
             <View style={{ padding: SIZES.font }}>
               <DetailsDesc data={data} />
-
               {data.bids.length > 0 && (
                 <Text
                   style={{
@@ -87,8 +126,15 @@ const Details = ({ route, navigation }) => {
                 </Text>
               )}
             </View>
-          </React.Fragment>
+          </>
         )}
+      />
+
+      <BidModal
+        visible={showBid}
+        onClose={() => setShowBid(false)}
+        onSubmit={handleSubmitBid}
+        current={data.price}
       />
     </SafeAreaView>
   );

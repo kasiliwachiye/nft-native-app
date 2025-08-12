@@ -9,14 +9,17 @@ import { useFonts } from "expo-font";
 
 import Home from "./screens/Home";
 import Details from "./screens/Details";
+import Profile from "./screens/Profile";
+import Wallet from "./screens/Wallet";
+
 import { FavoritesProvider } from "./store/favorites";
+import { UserProvider } from "./store/user";
+import { WalletProvider } from "./store/wallet";
+import { NFTsProvider } from "./store/nfts";
 
 const theme = {
   ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: "transparent",
-  },
+  colors: { ...DefaultTheme.colors, background: "transparent" },
 };
 
 const Stack = createNativeStackNavigator();
@@ -47,17 +50,25 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <FavoritesProvider>
-          <NavigationContainer theme={theme}>
-            <Stack.Navigator
-              screenOptions={{ headerShown: false }}
-              initialRouteName="Home"
-            >
-              <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="Details" component={Details} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </FavoritesProvider>
+        <UserProvider>
+          <WalletProvider>
+            <NFTsProvider>
+              <FavoritesProvider>
+                <NavigationContainer theme={theme}>
+                  <Stack.Navigator
+                    screenOptions={{ headerShown: false }}
+                    initialRouteName="Home"
+                  >
+                    <Stack.Screen name="Home" component={Home} />
+                    <Stack.Screen name="Details" component={Details} />
+                    <Stack.Screen name="Profile" component={Profile} />
+                    <Stack.Screen name="Wallet" component={Wallet} />
+                  </Stack.Navigator>
+                </NavigationContainer>
+              </FavoritesProvider>
+            </NFTsProvider>
+          </WalletProvider>
+        </UserProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

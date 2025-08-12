@@ -1,7 +1,8 @@
 import React, { useRef } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
-
 import { COLORS, FONTS, SIZES, assets } from "../constants";
+import { useNavigation } from "@react-navigation/native";
+import { useWallet } from "../store/wallet";
 
 export default function HomeHeader({
   onSearch,
@@ -9,8 +10,10 @@ export default function HomeHeader({
   onToggleFavorites,
   favCount,
 }) {
-  // light debounce so filtering is not too chatty
+  const nav = useNavigation();
+  const { balance } = useWallet();
   const timer = useRef(null);
+
   const handleText = (txt) => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => onSearch?.(txt), 250);
@@ -25,13 +28,26 @@ export default function HomeHeader({
           alignItems: "center",
         }}
       >
-        <Image
-          source={assets.logo}
-          resizeMode="contain"
-          style={{ width: 90, height: 25 }}
-        />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => nav.navigate("Wallet")}
+          style={{ flexDirection: "row", alignItems: "center" }}
+        >
+          <Image
+            source={assets.eth}
+            resizeMode="contain"
+            style={{ width: 18, height: 18, marginRight: 6 }}
+          />
+          <Text style={{ color: "#fff", fontFamily: FONTS.medium }}>
+            {balance.toFixed(2)}
+          </Text>
+        </TouchableOpacity>
 
-        <View style={{ width: 45, height: 45 }}>
+        <TouchableOpacity
+          style={{ width: 45, height: 45 }}
+          activeOpacity={0.8}
+          onPress={() => nav.navigate("Profile")}
+        >
           <Image
             source={assets.person01}
             resizeMode="contain"
@@ -48,7 +64,7 @@ export default function HomeHeader({
               right: 0,
             }}
           />
-        </View>
+        </TouchableOpacity>
       </View>
 
       <View style={{ marginVertical: SIZES.font }}>
@@ -61,7 +77,6 @@ export default function HomeHeader({
         >
           Hello Victoria 👋
         </Text>
-
         <Text
           style={{
             fontFamily: FONTS.bold,

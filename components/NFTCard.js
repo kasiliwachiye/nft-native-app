@@ -25,7 +25,7 @@ function NFTCard({ data }) {
         />
       </View>
 
-      <SubInfo />
+      <SubInfo endAt={data.endAt} />
 
       <View style={styles.body}>
         <NFTTitle
@@ -34,13 +34,12 @@ function NFTCard({ data }) {
           titleSize={SIZES.large}
           subTitleSize={SIZES.small}
         />
-
         <View style={styles.row}>
           <EthPrice price={data.price} />
           <RectButton
             minWidth={120}
             fontSize={SIZES.font}
-            onPress={() => navigation.navigate("Details", { data })}
+            onPress={() => navigation.navigate("Details", { id: data.id })}
           />
         </View>
       </View>

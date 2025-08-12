@@ -2,31 +2,23 @@ import React, { useMemo, useState } from "react";
 import { View, SafeAreaView, FlatList } from "react-native";
 
 import { NFTCard, HomeHeader, FocusedStatusBar } from "../components";
-import { COLORS, NFTData } from "../constants";
+import { COLORS } from "../constants";
 import { useFavorites } from "../store/favorites";
+import { useNFTs } from "../store/nfts";
 
 const Home = () => {
-  const [nftData, setNftData] = useState(NFTData);
+  const { list } = useNFTs();
+  const [query, setQuery] = useState("");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const { isFav, count } = useFavorites();
 
-  const handleSearch = (value) => {
-    if (!value || value.length === 0) {
-      setNftData(NFTData);
-      return;
-    }
-
-    const filteredData = NFTData.filter((item) =>
-      item.name.toLowerCase().includes(value.toLowerCase())
-    );
-
-    setNftData(filteredData.length === 0 ? NFTData : filteredData);
-  };
-
-  const data = useMemo(
-    () => (favoritesOnly ? nftData.filter((it) => isFav(it.id)) : nftData),
-    [favoritesOnly, nftData, isFav]
-  );
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const base = q
+      ? list.filter((i) => i.name.toLowerCase().includes(q))
+      : list;
+    return favoritesOnly ? base.filter((i) => isFav(i.id)) : base;
+  }, [query, list, favoritesOnly, isFav]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -34,13 +26,13 @@ const Home = () => {
       <View style={{ flex: 1 }}>
         <View style={{ zIndex: 0 }}>
           <FlatList
-            data={data}
+            data={filtered}
             renderItem={({ item }) => <NFTCard data={item} />}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
               <HomeHeader
-                onSearch={handleSearch}
+                onSearch={setQuery}
                 favoritesOnly={favoritesOnly}
                 onToggleFavorites={() => setFavoritesOnly((p) => !p)}
                 favCount={count}
